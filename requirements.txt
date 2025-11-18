@@ -1,0 +1,21 @@
+# Web Framework
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+
+# LangChain Core
+langchain==0.1.5
+langchain-openai==0.0.5
+langchain-community==0.0.20
+
+# Vector Store
+chromadb==0.4.22
+
+# Document Processing
+pypdf==4.0.1
+
+# Environment Variables
+python-dotenv==1.0.1
+
+# Additional dependencies
+pydantic==2.5.3
+openai==1.10.0

@@ -2,7 +2,8 @@
 FastAPI + LangChain RAG Q&A Bot
 2주 해커톤 프로젝트
 """
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
 from dotenv import load_dotenv
 import os
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
@@ -92,6 +93,54 @@ async def root():
         "project": "LangChain RAG Q&A Bot",
         "rag_chain_ready": True
     }
+
+
+# 📌 요청/응답 모델 정의
+class QuestionRequest(BaseModel):
+    """질문 요청 모델"""
+    question: str
+    
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "question": "문서의 주요 내용은 무엇인가요?"
+            }
+        }
+
+
+class AnswerResponse(BaseModel):
+    """답변 응답 모델"""
+    question: str
+    answer: str
+
+
+@app.post("/ask", response_model=AnswerResponse)
+async def ask_question(request: QuestionRequest):
+    """
+    문서 기반 질문에 답변하는 엔드포인트
+    
+    - **question**: 사용자의 질문
+    
+    Returns:
+    - **question**: 입력받은 질문
+    - **answer**: RAG 체인이 생성한 답변
+    """
+    try:
+        # RAG 체인 실행
+        # invoke()는 동기 함수지만, FastAPI는 자동으로 비동기 처리합니다
+        answer = rag_chain.invoke(request.question)
+        
+        return AnswerResponse(
+            question=request.question,
+            answer=answer
+        )
+    
+    except Exception as e:
+        # 오류 발생 시 상세 정보 반환
+        raise HTTPException(
+            status_code=500,
+            detail=f"답변 생성 중 오류가 발생했습니다: {str(e)}"
+        )
 
 
 if __name__ == "__main__":

@@ -26,7 +26,7 @@ class ChatbotApp:
             raise ValueError("GOOGLE_API_KEY가 .env 파일에 설정되지 않았습니다.")
         
         self.llm = ChatGoogleGenerativeAI(
-            model="gemini-pro",
+            model="gemini-1.5-flash",
             google_api_key=api_key,
             temperature=0.7
         )
